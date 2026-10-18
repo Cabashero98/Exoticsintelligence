@@ -1,0 +1,1064 @@
+<title>Exotics Intelligence</title>
+<meta name="description" content="Exotics Intelligence builds market intelligence and tools for exotic fruit importers in Europe. Mango Track: price, freight, volume, weather and AWB tracking for air-freighted mango.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* Layout: centered hero with a live product frame, then left-aligned "rooms" on a matte-black canvas; one mango accent, numbers in mono. */
+:root{
+  color-scheme:dark;
+  --bg:#0a0a09;
+  --surface:#121210;
+  --surface-2:#181714;
+  --surface-3:#201e1a;
+  --line:rgba(255,246,230,.08);
+  --line-2:rgba(255,246,230,.15);
+  --fg:#f5f2eb;
+  --muted:#a29e94;
+  --dim:#77736b;
+  --mango:#ffae3d;
+  --mango-deep:#f0702e;
+  --leaf:#4ebe96;
+  --up:#ff7461;
+  --mango-grad:linear-gradient(97deg,#ffd685 0%,#ffae3d 38%,#f0702e 78%,#b8401c 110%);
+  --font-sans:'Geist',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-serif:'Instrument Serif','Iowan Old Style','Palatino Linotype',Georgia,serif;
+  --font-mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --halo:0 0 44px rgba(0,0,0,.8);
+  --r-card:16px;
+  --r-pill:99px;
+  --max:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.011em;overflow-x:hidden}
+a{color:inherit}
+img,svg{max-width:100%}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--mango);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:0}
+.skip{position:absolute;left:-9999px;top:8px;background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:var(--r-pill);z-index:100}
+.skip:focus{left:16px}
+em.acc{font-family:var(--font-serif);font-style:italic;font-weight:400;letter-spacing:-.01em;background:var(--mango-grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(10,10,9,.72);backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px);border-bottom:1px solid transparent;transition:border-color .2s}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-in{display:flex;align-items:center;gap:24px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;font-size:15px;letter-spacing:-.02em;white-space:nowrap}
+.brand svg{width:26px;height:26px;flex:none}
+.brand small{display:block;font-family:var(--font-mono);font-size:10px;font-weight:400;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;line-height:1}
+.links{display:flex;gap:4px;margin-left:12px}
+.links a{color:var(--muted);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:var(--r-pill);transition:color .15s,background .15s}
+.links a:hover{color:var(--fg);background:var(--surface-2)}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.lang{appearance:none;-webkit-appearance:none;background:transparent;border:1px solid var(--line-2);color:var(--fg);font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;padding:8px 28px 8px 12px;border-radius:var(--r-pill);cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a29e94' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;min-height:36px}
+.lang option{background:var(--surface);color:var(--fg)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:500;font-size:14px;border-radius:var(--r-pill);padding:11px 20px;min-height:40px;cursor:pointer;border:1px solid transparent;transition:transform .15s ease,box-shadow .2s,background .2s,border-color .2s;white-space:nowrap}
+.btn-primary{background:var(--fg);color:var(--bg);box-shadow:0 1px 0 rgba(0,0,0,.85),0 0 14px rgba(255,236,200,.18)}
+.btn-primary:hover{box-shadow:0 1px 0 rgba(0,0,0,.85),0 0 22px rgba(255,190,90,.35);transform:translateY(-1px)}
+.btn-primary:active{transform:scale(.98)}
+.btn-ghost{border-color:var(--line-2);color:var(--fg);background:transparent}
+.btn-ghost:hover{border-color:var(--fg)}
+.btn svg{width:16px;height:16px}
+.menu-btn{display:none;background:transparent;border:1px solid var(--line-2);border-radius:var(--r-pill);width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer}
+.menu-btn svg{width:18px;height:18px}
+.mobile-menu{display:none;border-top:1px solid var(--line);padding-block:8px 16px}
+.mobile-menu a{display:block;padding:12px 4px;color:var(--fg);text-decoration:none;font-size:16px;border-bottom:1px solid var(--line)}
+.nav.open .mobile-menu{display:block}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding-block:clamp(56px,9vw,104px) 0;text-align:center;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0 0 auto 0;height:900px;z-index:-1;
+  background:
+   radial-gradient(60% 50% at 50% 62%,rgba(255,150,50,.16),transparent 70%),
+   radial-gradient(30% 30% at 22% 30%,rgba(78,190,150,.06),transparent 70%);
+  pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0 0 auto 0;height:760px;z-index:-1;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 10%,transparent 75%);mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 10%,transparent 75%);
+  opacity:.55;pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--fg);border:1px solid var(--line-2);border-radius:var(--r-pill);padding:6px 14px 6px 10px;background:rgba(18,18,16,.6);text-decoration:none}
+.badge:hover{border-color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--leaf);box-shadow:0 0 0 0 rgba(78,190,150,.6);animation:pulse 2.4s infinite;flex:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(78,190,150,.55)}70%{box-shadow:0 0 0 8px rgba(78,190,150,0)}100%{box-shadow:0 0 0 0 rgba(78,190,150,0)}}
+.hero h1{font-size:clamp(40px,7.2vw,84px);line-height:.98;font-weight:600;letter-spacing:-.055em;margin:26px auto 0;max-width:18ch;text-wrap:balance}
+.hero h1 em.acc{font-size:1.08em;letter-spacing:-.02em}
+.hero .sub{font-size:clamp(16px,1.6vw,19px);color:var(--muted);max-width:660px;margin:24px auto 0;text-wrap:pretty;line-height:1.6}
+.hero .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.hero .ctas .btn{padding:13px 24px;font-size:15px}
+.hero .meta{display:flex;gap:10px 22px;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--muted)}
+.hero .meta span{display:inline-flex;align-items:center;gap:8px}
+.hero .meta svg{width:14px;height:14px;color:var(--mango)}
+
+/* product frame */
+.stage{perspective:1800px;margin-top:clamp(48px,7vw,80px);padding-bottom:8px}
+.frame{max-width:1100px;margin:0 auto;text-align:left;background:var(--surface);border:1px solid var(--line-2);border-radius:20px;box-shadow:var(--halo),0 40px 120px -30px rgba(255,140,40,.25);transform:rotateX(9deg) scale(.985);transform-origin:50% 0;transition:transform .8s cubic-bezier(.2,.7,.2,1);overflow:hidden}
+.stage:hover .frame{transform:rotateX(0) scale(1)}
+.fbar{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.fbar .pt{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;letter-spacing:-.02em}
+.fbar .pt svg{width:20px;height:20px}
+.ftabs{display:flex;gap:4px;flex-wrap:wrap}
+.ftab{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 10px;border-radius:var(--r-pill);border:1px solid transparent}
+.ftab.on{color:var(--bg);background:var(--mango)}
+.fed{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.fbody{display:grid;grid-template-columns:280px minmax(0,1fr);gap:14px;padding:14px}
+.kcol{display:grid;gap:14px;align-content:start}
+.k{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.lbl{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.kv{display:flex;align-items:baseline;gap:10px;margin-top:8px;flex-wrap:wrap}
+.kv .n{font-family:var(--font-mono);font-size:30px;font-weight:500;letter-spacing:-.04em;line-height:1}
+.kv .u{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.ks{font-size:12.5px;color:var(--muted);margin-top:6px}
+.thermo{height:6px;border-radius:6px;background:var(--surface-3);margin-top:12px;overflow:hidden}
+.thermo i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--leaf),var(--mango),var(--up))}
+.d{font-family:var(--font-mono);font-size:12px;font-weight:500;white-space:nowrap}
+.d.up{color:var(--up)}.d.dn{color:var(--leaf)}
+.ccol{display:grid;gap:14px;min-width:0}
+.chartcard{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px 14px 6px;min-width:0}
+.chartcard svg{display:block;width:100%;height:auto;margin-top:6px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.legend i{width:14px;height:2px;border-radius:2px;display:inline-block}
+.call{background:linear-gradient(180deg,rgba(255,174,61,.09),rgba(255,174,61,.02));border:1px solid rgba(255,174,61,.35);border-radius:12px;padding:14px 16px}
+.call .lbl{color:var(--mango)}
+.call p{margin:6px 0 0;font-size:14.5px;line-height:1.55}
+.ffoot{display:flex;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:10.5px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;gap:10px;flex-wrap:wrap}
+
+/* ticker */
+.ticker{margin-top:clamp(40px,6vw,64px);border-block:1px solid var(--line);overflow:hidden;background:rgba(18,18,16,.5);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ttrack{display:flex;width:max-content;animation:tick 48s linear infinite}
+.ticker:hover .ttrack{animation-play-state:paused}
+.titem{display:flex;align-items:center;gap:10px;padding:14px 26px;font-family:var(--font-mono);font-size:12.5px;white-space:nowrap;border-right:1px solid var(--line)}
+.titem b{font-weight:500;color:var(--muted);letter-spacing:.06em}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section{padding-block:clamp(80px,11vw,136px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mango)}
+.eyebrow::before{content:"";width:18px;height:1px;background:currentColor}
+.h2{font-size:clamp(32px,4.6vw,56px);line-height:1.02;font-weight:600;letter-spacing:-.05em;margin:18px 0 0;max-width:20ch;text-wrap:balance}
+.lead{font-size:clamp(16px,1.4vw,18px);color:var(--muted);max-width:620px;margin:20px 0 0;text-wrap:pretty}
+.hl{display:block;margin-top:16px;color:var(--fg);font-weight:500;text-wrap:balance}
+.sub-strong{color:var(--fg);font-weight:500}
+
+/* gap */
+.gap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:56px}
+.gcard{border-radius:var(--r-card);padding:28px;border:1px solid var(--line);background:var(--surface)}
+.gcard.with{background:linear-gradient(180deg,rgba(255,174,61,.07),transparent 60%),var(--surface);border-color:rgba(255,174,61,.3);box-shadow:var(--halo)}
+.gcard h3{margin:0;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.gcard.with h3{color:var(--mango)}
+.gcard ul{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:2px}
+.gcard li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);font-size:15.5px}
+.gcard li:first-child{border-top:0}
+.gcard li svg{width:18px;height:18px;flex:none;margin-top:3px}
+.gcard:not(.with) li{color:var(--muted)}
+.gcard:not(.with) li svg{color:var(--dim)}
+.gcard.with li svg{color:var(--leaf)}
+
+/* tour */
+.tour{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:20px;margin-top:56px;align-items:start}
+.tlist{display:grid;gap:6px}
+.titem-btn{display:grid;grid-template-columns:36px 1fr;gap:4px 14px;text-align:left;background:transparent;border:1px solid transparent;border-radius:14px;padding:16px;cursor:pointer;transition:background .2s,border-color .2s}
+.titem-btn:hover{background:var(--surface)}
+.titem-btn[aria-selected="true"]{background:var(--surface);border-color:var(--line-2);box-shadow:var(--halo)}
+.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);grid-row:span 2;color:var(--muted);transition:color .2s,background .2s}
+.ico svg{width:18px;height:18px}
+.titem-btn[aria-selected="true"] .ico{color:var(--bg);background:var(--mango);border-color:var(--mango)}
+.titem-btn .tt{font-weight:600;font-size:16px;letter-spacing:-.02em;align-self:center}
+.titem-btn .td{font-size:14px;color:var(--muted);line-height:1.5;display:none}
+.titem-btn[aria-selected="true"] .td{display:block}
+.tpanel{background:var(--surface);border:1px solid var(--line-2);border-radius:20px;padding:20px;box-shadow:var(--halo),0 30px 90px -40px rgba(255,140,40,.25);min-height:480px;min-width:0;position:relative;overflow:hidden}
+.tpanel::before{content:"";position:absolute;inset:-1px;background:radial-gradient(50% 40% at 100% 0%,rgba(255,174,61,.08),transparent 70%);pointer-events:none}
+.tpanel-in{position:relative;animation:fadein .35s ease}
+@keyframes fadein{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.tag{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:var(--r-pill);padding:3px 9px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:13px;font-variant-numeric:tabular-nums}
+th{font-weight:400;color:var(--muted);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;text-align:right;padding:10px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:4px}
+td{text-align:right;padding:12px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td:first-child{font-family:var(--font-sans);font-weight:500;letter-spacing:-.01em}
+td.fob{color:var(--mango);font-weight:500}
+th.fob{color:var(--mango)}
+.via{font-size:11px;padding:2px 8px;border-radius:var(--r-pill);border:1px solid var(--line-2);color:var(--muted)}
+.via.air{color:var(--mango);border-color:rgba(255,174,61,.35)}
+.routes{display:grid;gap:8px}
+.route{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.route .r{font-family:var(--font-mono);font-size:13px;display:flex;align-items:center;gap:8px;min-width:0}
+.route .r svg{width:14px;height:14px;color:var(--dim);flex:none}
+.route .v{font-family:var(--font-mono);font-size:16px;font-weight:500}
+.route.best{border-color:rgba(78,190,150,.4)}
+.best-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--leaf)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bars{display:grid;gap:14px;margin-top:6px}
+.bar .bt{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:12.5px;margin-bottom:6px;flex-wrap:wrap}
+.bar .bt span:last-child{color:var(--muted)}
+.track{height:8px;border-radius:8px;background:var(--surface-3);overflow:hidden}
+.track i{display:block;height:100%;border-radius:8px}
+.wx{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+.wx-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.wx-top svg{width:44px;height:44px;flex:none}
+.fc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.fcd{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 4px;font-family:var(--font-mono);font-size:12px}
+.fcd svg{width:20px;height:20px;display:block;margin:4px auto}
+.fcd small{display:block;color:var(--muted);font-size:10.5px}
+.note{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13.5px;color:var(--mango);line-height:1.45}
+.awb{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+.awb-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.awb-n{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--mango)}
+.status{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--mango);border-radius:var(--r-pill);padding:4px 10px;display:inline-flex;align-items:center;gap:6px}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.ms{margin-top:16px;display:grid}
+.m{display:grid;grid-template-columns:16px 1fr auto;gap:12px;position:relative;padding-bottom:14px}
+.m::before{content:"";position:absolute;left:7px;top:16px;bottom:0;width:2px;background:var(--surface-3)}
+.m.done::before{background:var(--leaf)}
+.m:last-child::before{display:none}
+.m i{width:16px;height:16px;border-radius:50%;border:2px solid var(--dim);background:var(--surface-2);position:relative;z-index:1;margin-top:2px}
+.m.done i{border-color:var(--leaf);background:var(--leaf)}
+.m.now i{border-color:var(--mango);background:var(--bg);box-shadow:0 0 0 4px rgba(255,174,61,.18)}
+.m span{font-size:14px;color:var(--dim)}
+.m.done span,.m.now span{color:var(--fg)}
+.m small{font-family:var(--font-mono);font-size:11.5px;color:var(--muted)}
+.fakebtn{display:inline-flex;margin-top:4px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;border:1px solid rgba(255,174,61,.4);color:var(--mango);border-radius:var(--r-pill);padding:6px 12px}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:56px}
+.cin{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);padding:24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px;align-content:start}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
+.inp-w{position:relative}
+.inp-w input{width:100%;background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;color:var(--fg);font-family:var(--font-mono);font-size:17px;padding:12px 64px 12px 14px;min-height:48px;font-variant-numeric:tabular-nums;transition:border-color .15s}
+.inp-w input:focus{outline:none;border-color:var(--mango);box-shadow:0 0 0 3px rgba(255,174,61,.15)}
+.inp-w .unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--font-mono);font-size:12px;color:var(--muted);pointer-events:none}
+.cin .cnote{grid-column:1/-1;font-size:12.5px;color:var(--dim);margin:0}
+.cout{background:linear-gradient(160deg,rgba(255,174,61,.1),transparent 55%),var(--surface);border:1px solid rgba(255,174,61,.3);border-radius:var(--r-card);padding:24px;display:grid;gap:18px;align-content:start;box-shadow:var(--halo)}
+.crow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.cstat .lbl{display:block}
+.cstat .big{font-family:var(--font-mono);font-size:clamp(26px,3vw,34px);font-weight:500;letter-spacing:-.04em;margin-top:6px;line-height:1.1;font-variant-numeric:tabular-nums}
+.cstat .big small{font-size:13px;color:var(--muted);letter-spacing:0;margin-left:4px}
+.cbar{height:10px;border-radius:10px;background:var(--surface-3);overflow:hidden;display:flex}
+.cbar i{display:block;height:100%}
+.ckey{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.ckey span{display:inline-flex;align-items:center;gap:6px}
+.ckey i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.chero{border-top:1px solid var(--line);padding-top:18px}
+.chero p{margin:0;color:var(--muted);font-size:15px}
+.chero .huge{font-family:var(--font-mono);font-size:clamp(40px,5.4vw,64px);font-weight:500;letter-spacing:-.05em;line-height:1;margin:10px 0 6px;background:var(--mango-grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.neg{color:var(--up)!important}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:56px;counter-reset:s}
+.step{border-top:1px solid var(--line-2);padding-top:22px;position:relative}
+.step::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:var(--font-mono);font-size:12px;color:var(--mango);letter-spacing:.08em}
+.step::after{content:"";position:absolute;top:-1px;left:0;width:48px;height:1px;background:var(--mango)}
+.step h3{margin:14px 0 0;font-size:21px;font-weight:600;letter-spacing:-.03em}
+.step p{margin:10px 0 0;color:var(--muted);font-size:15px}
+
+/* ecosystem */
+.eco{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px;margin-top:56px}
+.ecard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);padding:26px;display:flex;flex-direction:column;gap:14px;min-height:300px;transition:border-color .2s,transform .2s}
+.ecard:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.ecard.main{background:radial-gradient(80% 60% at 100% 0%,rgba(255,174,61,.16),transparent 70%),var(--surface);border-color:rgba(255,174,61,.3);box-shadow:var(--halo)}
+.ecard .etop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ecard .eico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line)}
+.ecard .eico svg{width:22px;height:22px}
+.pill{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;border-radius:var(--r-pill);padding:4px 10px;border:1px solid var(--line-2);color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.pill.live{color:var(--leaf);border-color:rgba(78,190,150,.4)}
+.pill.live::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.ecard h3{margin:auto 0 0;font-size:24px;font-weight:600;letter-spacing:-.035em;line-height:1.1}
+.ecard p{margin:0;color:var(--muted);font-size:15px}
+.elink{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;text-decoration:none;color:var(--fg);margin-top:4px}
+.elink svg{width:14px;height:14px;transition:transform .2s}
+.elink:hover svg{transform:translateX(3px)}
+
+/* faq */
+.faq-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:48px;align-items:start}
+.faq{border-top:1px solid var(--line-2)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:17px;font-weight:500;letter-spacing:-.02em}
+summary::-webkit-details-marker{display:none}
+summary .pm{width:28px;height:28px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;flex:none;transition:transform .25s,background .2s}
+summary .pm svg{width:12px;height:12px}
+details[open] summary .pm{transform:rotate(45deg);background:var(--surface-2)}
+details p{margin:0 0 22px;color:var(--muted);max-width:60ch}
+
+/* final cta */
+.final{padding-block:clamp(40px,6vw,64px) clamp(80px,10vw,120px)}
+.fcta{position:relative;overflow:hidden;border-radius:28px;border:1px solid var(--line-2);background:var(--surface);padding:clamp(40px,7vw,88px) clamp(24px,5vw,64px);text-align:center;isolation:isolate}
+.fcta::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 70% at 50% 120%,rgba(255,150,50,.32),transparent 70%),radial-gradient(30% 40% at 85% 0%,rgba(78,190,150,.08),transparent 70%)}
+.fcta .mark{width:56px;height:56px;margin:0 auto}
+.fcta h2{font-size:clamp(32px,5vw,60px);line-height:1.02;font-weight:600;letter-spacing:-.05em;margin:22px auto 0;max-width:18ch;text-wrap:balance}
+.fcta p{color:var(--muted);font-size:clamp(16px,1.5vw,18px);max-width:520px;margin:18px auto 0}
+.fcta .ctas{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:32px}
+.fcta .ctas .btn{padding:14px 26px;font-size:15px}
+.fcta small{display:block;margin-top:16px;color:var(--dim);font-size:13px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding-block:56px 40px}
+.fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
+.fgrid p{color:var(--muted);font-size:14px;max-width:34ch;margin:14px 0 0}
+.fgrid h4{margin:0 0 14px;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.fgrid ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.fgrid ul a{color:var(--muted);text-decoration:none;font-size:14px}
+.fgrid ul a:hover{color:var(--fg)}
+.fbot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);font-family:var(--font-mono)}
+
+/* responsive */
+@media (max-width:980px){
+  .links{display:none}
+  .menu-btn{display:inline-flex}
+  .nav-r .btn-primary{display:none}
+  .fbody{grid-template-columns:1fr}
+  .kcol{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .tour{grid-template-columns:1fr}
+  .tlist{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .titem-btn .td{display:none!important}
+  .calc{grid-template-columns:1fr}
+  .eco{grid-template-columns:1fr 1fr}
+  .ecard.main{grid-column:1/-1}
+  .faq-grid{grid-template-columns:1fr;gap:24px}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .fgrid>div:first-child{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .brand small{display:none}
+  .frame{transform:none}
+  .kcol{grid-template-columns:1fr}
+  .fed{margin-left:0;width:100%}
+  .gap-grid,.steps,.eco,.two,.cin,.crow{grid-template-columns:1fr}
+  .tlist{grid-template-columns:1fr 1fr}
+  .titem-btn{grid-template-columns:28px 1fr;padding:12px;gap:4px 10px}
+  .ico{width:28px;height:28px;grid-row:span 1}
+  .ico svg{width:15px;height:15px}
+  .titem-btn .tt{font-size:14px}
+  .tpanel{padding:14px;min-height:0}
+  .ecard{min-height:0}
+  .ecard h3{margin-top:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .frame{transform:none}
+}
+</style>
+
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<!-- shared svg defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd685"/><stop offset=".45" stop-color="#ffae3d"/><stop offset="1" stop-color="#e0602a"/>
+    </linearGradient>
+    <symbol id="logo" viewBox="0 0 32 32">
+      <rect x=".5" y=".5" width="31" height="31" rx="9" fill="#161512" stroke="rgba(255,246,230,.15)"/>
+      <path d="M16.2 7.4c4.7 0 8.2 3.6 8.2 8.3 0 5.1-4.1 9.3-8.9 9.3-4.3 0-7.9-3.2-7.9-7.4 0-5.6 3.9-10.2 8.6-10.2z" fill="url(#mg)"/>
+      <path d="M17 7.6c.7-1.9 2.6-3 4.8-2.7-.5 2.2-2.4 3.4-4.8 2.7z" fill="#4ebe96"/>
+      <path d="M11.4 19.2l3-3 2.3 2 3.9-4.3" fill="none" stroke="#0a0a09" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="arrow" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="cal" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="check" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 9.2l2.3 2.3 4.7-4.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="x" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="plus" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-price" viewBox="0 0 20 20"><path d="M3 15l4.5-5 3.5 3 6-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 6h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 20 20"><path d="M2.5 11.5l15-6.5-3.5 11-3.5-4-4 1.5-.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10.5 12l7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-box" viewBox="0 0 20 20"><path d="M10 2.5l7 3.5v8l-7 3.5-7-3.5V6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 6l7 3.5L17 6M10 9.5v8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 20 20"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l.6.6M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 17.5h6.5a2.8 2.8 0 000-5.6 3.8 3.8 0 00-7 1.2A2.2 2.2 0 009 17.5z" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-awb" viewBox="0 0 20 20"><rect x="3" y="2.5" width="14" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 7h7M6.5 10h7M6.5 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 22 22"><path d="M4 4.5A1.5 1.5 0 015.5 3H18v14H5.5A1.5 1.5 0 004 18.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 18.5A1.5 1.5 0 005.5 20H18v-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7.5h6M8 10.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-web" viewBox="0 0 22 22"><rect x="2.5" y="4" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 8h17" stroke="currentColor" stroke-width="1.5"/><circle cx="5.5" cy="6" r=".8" fill="currentColor"/><circle cx="8" cy="6" r=".8" fill="currentColor"/><path d="M6 12h5M6 14.5h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="w-sun" viewBox="0 0 40 40"><circle cx="20" cy="20" r="7.5" fill="#ffae3d"/><g stroke="#ffae3d" stroke-width="2.2" stroke-linecap="round"><path d="M20 4v4M20 32v4M4 20h4M32 20h4M8.7 8.7l2.8 2.8M28.5 28.5l2.8 2.8M8.7 31.3l2.8-2.8M28.5 11.5l2.8-2.8"/></g></symbol>
+    <symbol id="w-part" viewBox="0 0 40 40"><circle cx="15" cy="15" r="6" fill="#ffae3d"/><g stroke="#ffae3d" stroke-width="2" stroke-linecap="round"><path d="M15 3.5v3M3.5 15h3M6.9 6.9l2.1 2.1M23.1 6.9L21 9"/></g><path d="M16 33h15a6 6 0 000-12 8 8 0 00-15 2.5A4.8 4.8 0 0016 33z" fill="#a29e94"/></symbol>
+    <symbol id="w-cloud" viewBox="0 0 40 40"><path d="M11 31h18a7 7 0 000-14 9.5 9.5 0 00-18 3A5.6 5.6 0 0011 31z" fill="#a29e94"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav-in">
+      <a class="brand" href="#top" aria-label="Exotics Intelligence">
+        <svg aria-hidden="true"><use href="#logo"/></svg>
+        <span>Exotics Intelligence<small data-i18n="brand_sub">Fruit import intelligence</small></span>
+      </a>
+      <nav class="links" aria-label="Main">
+        <a href="#mango-track">Mango Track</a>
+        <a href="#modules" data-i18n="nav_tour">Modules</a>
+        <a href="#margin" data-i18n="nav_calc">Margin calculator</a>
+        <a href="#products" data-i18n="nav_eco">Products</a>
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      </nav>
+      <div class="nav-r">
+        <label class="sr" for="lang" style="position:absolute;left:-9999px">Language</label>
+        <select class="lang" id="lang" aria-label="Language">
+          <option value="en">EN</option><option value="es">ES</option><option value="fr">FR</option><option value="it">IT</option>
+        </select>
+        <a class="btn btn-primary js-cal" href="#contact" data-i18n="nav_cta">Book a demo</a>
+        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Menu">
+          <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 9h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#mango-track">Mango Track</a>
+      <a href="#modules" data-i18n="nav_tour">Modules</a>
+      <a href="#margin" data-i18n="nav_calc">Margin calculator</a>
+      <a href="#products" data-i18n="nav_eco">Products</a>
+      <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      <a href="#contact" class="js-cal" data-i18n="nav_cta">Book a demo</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- HERO -->
+  <div class="hero" id="top">
+    <div class="wrap">
+      <a class="badge" href="#mango-track"><span class="dot" aria-hidden="true"></span><span data-i18n="hero_badge">Mango Track · Week 40 edition is out</span><svg width="14" height="14" aria-hidden="true" style="color:var(--muted)"><use href="#arrow"/></svg></a>
+      <h1 data-i18n="hero_title">The market desk for <em class="acc">air-freighted mango</em>.</h1>
+      <p class="sub" data-i18n="hero_sub"></p>
+      <div class="ctas">
+        <a class="btn btn-primary js-cal" href="#contact"><svg aria-hidden="true"><use href="#cal"/></svg><span data-i18n="hero_cta">Book your demo</span></a>
+        <a class="btn btn-ghost" href="#modules"><span data-i18n="hero_cta2">See what's inside</span><svg aria-hidden="true"><use href="#arrow"/></svg></a>
+      </div>
+      <div class="meta">
+        <span><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="hero_meta1"></span></span>
+        <span><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="hero_meta2"></span></span>
+        <span><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="hero_meta3"></span></span>
+      </div>
+
+      <div class="stage" id="mango-track">
+        <div class="frame" id="frame" role="img" aria-label="Mango Track dashboard preview"></div>
+      </div>
+    </div>
+    <div class="ticker" aria-hidden="true"><div class="ttrack" id="ticker"></div></div>
+  </div>
+
+  <!-- GAP -->
+  <section id="gap">
+    <div class="wrap">
+      <span class="eyebrow" data-i18n="gap_eye">The gap</span>
+      <h2 class="h2" data-i18n="gap_title"></h2>
+      <p class="lead" data-i18n="gap_body"></p>
+      <div class="gap-grid">
+        <div class="gcard">
+          <h3 data-i18n="gap_without">Today</h3>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#x"/></svg><span data-i18n="w1"></span></li>
+            <li><svg aria-hidden="true"><use href="#x"/></svg><span data-i18n="w2"></span></li>
+            <li><svg aria-hidden="true"><use href="#x"/></svg><span data-i18n="w3"></span></li>
+            <li><svg aria-hidden="true"><use href="#x"/></svg><span data-i18n="w4"></span></li>
+          </ul>
+        </div>
+        <div class="gcard with">
+          <h3 data-i18n="gap_with">With Mango Track</h3>
+          <ul>
+            <li><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="m1"></span></li>
+            <li><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="m2"></span></li>
+            <li><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="m3"></span></li>
+            <li><svg aria-hidden="true"><use href="#check"/></svg><span data-i18n="m4"></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOUR -->
+  <section id="modules" style="padding-top:0">
+    <div class="wrap">
+      <span class="eyebrow">Mango Track</span>
+      <h2 class="h2" data-i18n="tour_title"></h2>
+      <p class="lead" data-i18n="tour_sub"></p>
+      <div class="tour">
+        <div class="tlist" role="tablist" aria-label="Mango Track modules" id="tlist"></div>
+        <div class="tpanel" role="tabpanel" id="tpanel" tabindex="0"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section id="margin" style="padding-top:0">
+    <div class="wrap">
+      <span class="eyebrow" data-i18n="calc_eye">Margin calculator</span>
+      <h2 class="h2" data-i18n="calc_title"></h2>
+      <p class="lead" data-i18n="calc_sub"></p>
+      <div class="calc">
+        <form class="cin" id="calcForm" onsubmit="return false">
+          <div class="field"><label for="c_fob" data-i18n="c_fob"></label><div class="inp-w"><input id="c_fob" type="number" inputmode="decimal" step="0.05" min="0" value="2.10"><span class="unit">€/kg</span></div></div>
+          <div class="field"><label for="c_fr" data-i18n="c_freight"></label><div class="inp-w"><input id="c_fr" type="number" inputmode="decimal" step="0.05" min="0" value="2.74"><span class="unit">€/kg</span></div></div>
+          <div class="field"><label for="c_ha" data-i18n="c_hand"></label><div class="inp-w"><input id="c_ha" type="number" inputmode="decimal" step="0.05" min="0" value="0.45"><span class="unit">€/kg</span></div></div>
+          <div class="field"><label for="c_se" data-i18n="c_sell"></label><div class="inp-w"><input id="c_se" type="number" inputmode="decimal" step="0.05" min="0" value="5.60"><span class="unit">€/kg</span></div></div>
+          <div class="field"><label for="c_kg" data-i18n="c_kg"></label><div class="inp-w"><input id="c_kg" type="number" inputmode="numeric" step="100" min="0" value="2000"><span class="unit">kg</span></div></div>
+          <div class="field"><label for="c_n" data-i18n="c_n"></label><div class="inp-w"><input id="c_n" type="number" inputmode="numeric" step="1" min="0" value="24"><span class="unit">×</span></div></div>
+          <p class="cnote" data-i18n="c_note"></p>
+        </form>
+        <div class="cout" aria-live="polite">
+          <div class="crow">
+            <div class="cstat"><span class="lbl" data-i18n="c_landed"></span><div class="big" id="o_landed"></div></div>
+            <div class="cstat"><span class="lbl" data-i18n="c_margin"></span><div class="big" id="o_margin"></div></div>
+          </div>
+          <div>
+            <div class="cbar" id="o_bar"></div>
+            <div class="ckey" style="margin-top:10px">
+              <span><i style="background:var(--mango)"></i>FOB</span>
+              <span><i style="background:var(--mango-deep)"></i><span data-i18n="c_freight_s"></span></span>
+              <span><i style="background:var(--dim)"></i>Handling</span>
+              <span><i style="background:var(--leaf)"></i><span data-i18n="c_margin"></span></span>
+            </div>
+          </div>
+          <div class="crow">
+            <div class="cstat"><span class="lbl" data-i18n="c_ship"></span><div class="big" id="o_ship"></div></div>
+            <div class="cstat"><span class="lbl" data-i18n="c_season"></span><div class="big" id="o_season"></div></div>
+          </div>
+          <div class="chero">
+            <p data-i18n="c_cent"></p>
+            <div class="huge" id="o_cent"></div>
+            <p data-i18n="c_cent_after"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="how" style="padding-top:0">
+    <div class="wrap">
+      <span class="eyebrow" data-i18n="how_eye">How it works</span>
+      <h2 class="h2" data-i18n="how_title"></h2>
+      <div class="steps">
+        <div class="step"><h3 data-i18n="s1t"></h3><p data-i18n="s1d"></p></div>
+        <div class="step"><h3 data-i18n="s2t"></h3><p data-i18n="s2d"></p></div>
+        <div class="step"><h3 data-i18n="s3t"></h3><p data-i18n="s3d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECOSYSTEM -->
+  <section id="products" style="padding-top:0">
+    <div class="wrap">
+      <span class="eyebrow">Exotics Intelligence</span>
+      <h2 class="h2" data-i18n="eco_title"></h2>
+      <p class="lead" data-i18n="eco_sub"></p>
+      <div class="eco">
+        <article class="ecard main">
+          <div class="etop"><span class="eico"><svg aria-hidden="true" style="width:26px;height:26px"><use href="#logo"/></svg></span><span class="pill live" data-i18n="e1_tag">Live</span></div>
+          <h3>Mango Track</h3>
+          <p data-i18n="e1_d"></p>
+          <a class="elink js-cal" href="#contact"><span data-i18n="nav_cta"></span><svg aria-hidden="true"><use href="#arrow"/></svg></a>
+        </article>
+        <article class="ecard">
+          <div class="etop"><span class="eico" style="color:var(--mango)"><svg aria-hidden="true"><use href="#i-book"/></svg></span><span class="pill" data-i18n="e2_tag">Coming soon</span></div>
+          <h3 data-i18n="e2_name"></h3>
+          <p data-i18n="e2_d"></p>
+          <a class="elink js-cal" href="#contact"><span data-i18n="e2_cta"></span><svg aria-hidden="true"><use href="#arrow"/></svg></a>
+        </article>
+        <article class="ecard">
+          <div class="etop"><span class="eico" style="color:var(--leaf)"><svg aria-hidden="true"><use href="#i-web"/></svg></span><span class="pill" data-i18n="e3_tag">Service</span></div>
+          <h3 data-i18n="e3_name"></h3>
+          <p data-i18n="e3_d"></p>
+          <a class="elink js-cal" href="#contact"><span data-i18n="e3_cta"></span><svg aria-hidden="true"><use href="#arrow"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" style="padding-top:0">
+    <div class="wrap faq-grid">
+      <div>
+        <span class="eyebrow" data-i18n="nav_faq">FAQ</span>
+        <h2 class="h2" data-i18n="faq_title"></h2>
+      </div>
+      <div class="faq" id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div class="final" id="contact">
+    <div class="wrap">
+      <div class="fcta">
+        <svg class="mark" aria-hidden="true"><use href="#logo"/></svg>
+        <h2 data-i18n="cta_title"></h2>
+        <p data-i18n="cta_sub"></p>
+        <div class="ctas">
+          <a class="btn btn-primary js-cal" href="#contact"><svg aria-hidden="true"><use href="#cal"/></svg><span data-i18n="cta_btn"></span></a>
+        </div>
+        <small data-i18n="cta_note"></small>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#top"><svg aria-hidden="true"><use href="#logo"/></svg><span>Exotics Intelligence</span></a>
+        <p data-i18n="f_tag"></p>
+      </div>
+      <div>
+        <h4 data-i18n="nav_eco"></h4>
+        <ul>
+          <li><a href="#mango-track">Mango Track</a></li>
+          <li><a href="#products" data-i18n="e2_name"></a></li>
+          <li><a href="#products" data-i18n="e3_name"></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Mango Track</h4>
+        <ul>
+          <li><a href="#modules" data-i18n="nav_tour"></a></li>
+          <li><a href="#margin" data-i18n="nav_calc"></a></li>
+          <li><a href="#faq" data-i18n="nav_faq"></a></li>
+          <li><a href="#contact" class="js-cal" data-i18n="nav_cta"></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="f_legal"></h4>
+        <ul>
+          <li><a href="#" data-i18n="f_privacy"></a></li>
+          <li><a href="#" data-i18n="f_notice"></a></li>
+          <li><a href="#" data-i18n="f_cookies"></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>© 2026 Exotics Intelligence</span>
+      <span data-i18n="f_disc"></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ====== EDIT HERE: your Calendly link ====== */
+const CALENDLY_URL = "https://calendly.com/YOUR-LINK/demo";
+
+/* ====== Illustrative market data (from the Mango Track demo, Week 40) ====== */
+const DATA = {
+  products:[
+    {k:"Mango Kent",via:"air",brix:"11.5°",fob:2.10,rungis:5.60,merca:5.30,rotter:5.10,wow:6.2},
+    {k:"Mango Haden",via:"air",brix:"10.8°",fob:1.85,rungis:4.90,merca:4.70,rotter:4.55,wow:3.1},
+    {k:"Mango Kent",via:"sea",brix:"10.2°",fob:1.05,rungis:2.35,merca:2.20,rotter:2.10,wow:-4.4},
+    {k:"pitahaya",via:"air",brix:"—",fob:4.20,rungis:9.80,merca:9.20,rotter:8.90,wow:1.8},
+    {k:"granadilla",via:"air",brix:"—",fob:3.10,rungis:7.40,merca:7.00,rotter:6.80,wow:-2.0}
+  ],
+  serie:[
+    {w:31,fob:1.70,rungis:4.80,fr:2.55},{w:32,fob:1.78,rungis:4.95,fr:2.55},{w:33,fob:1.82,rungis:5.05,fr:2.60},
+    {w:34,fob:1.75,rungis:4.90,fr:2.60},{w:35,fob:1.88,rungis:5.10,fr:2.62},{w:36,fob:1.95,rungis:5.25,fr:2.65},
+    {w:37,fob:2.02,rungis:5.35,fr:2.68},{w:38,fob:1.98,rungis:5.30,fr:2.70},{w:39,fob:2.05,rungis:5.45,fr:2.72},
+    {w:40,fob:2.10,rungis:5.60,fr:2.74}
+  ],
+  routes:[
+    {o:"LIM",d:"AMS",v:2.74,wow:0.7},{o:"LIM",d:"MAD",v:2.79,wow:1.1},
+    {o:"LIM",d:"LGG",v:2.68,wow:0.4},{o:"UIO",d:"AMS",v:2.92,wow:-0.6}
+  ],
+  vol:[96,108,121,118,134,147,152,149,164,184],
+  origins:[{a:"Lima (LIM)",t:125,p:278,pct:68},{a:"Quito (UIO)",t:40,p:89,pct:22},{a:"Miami (MIA)",t:19,p:42,pct:10}]
+};
+
+/* ====== Copy: [en, es, fr, it] ====== */
+const T = {
+  skip:["Skip to content","Saltar al contenido","Aller au contenu","Vai al contenuto"],
+  brand_sub:["Fruit import intelligence","Inteligencia para importadores","Intelligence import fruits","Intelligence per importatori"],
+  nav_tour:["Modules","Módulos","Modules","Moduli"],
+  nav_calc:["Margin calculator","Calculadora de margen","Calculateur de marge","Calcolo del margine"],
+  nav_eco:["Products","Productos","Produits","Prodotti"],
+  nav_faq:["FAQ","Preguntas","FAQ","FAQ"],
+  nav_cta:["Book a demo","Solicita tu demo","Demander une démo","Richiedi una demo"],
+
+  hero_badge:["For air-mango importers and traders","Para importadores y traders de mango aéreo","Pour importateurs et traders de mangue avion","Per importatori e trader di mango aereo"],
+  hero_title:["Buy air mango on market data, <em class=\"acc\">not on gut feeling.</em>","Compra mango aéreo con información de mercado, <em class=\"acc\">no con intuición.</em>","Achetez votre mangue avion sur des données de marché, <em class=\"acc\">pas à l'instinct.</em>","Compra mango aereo con i dati di mercato, <em class=\"acc\">non a intuito.</em>"],
+  hero_sub:[
+    "<span class=\"sub-strong\">Fruit price. Air freight. Volumes. Markets. Your shipments.</span><br>Everything you need to make better buying decisions, in one place.",
+    "<span class=\"sub-strong\">Precio de fruta. Flete aéreo. Volúmenes. Mercado. Tus cargas.</span><br>Todo lo que necesitas para tomar mejores decisiones de compra, en un solo lugar.",
+    "<span class=\"sub-strong\">Prix du fruit. Fret aérien. Volumes. Marchés. Vos envois.</span><br>Tout ce qu'il faut pour mieux décider vos achats, au même endroit.",
+    "<span class=\"sub-strong\">Prezzo della frutta. Nolo aereo. Volumi. Mercati. Le tue spedizioni.</span><br>Tutto ciò che ti serve per decidere meglio i tuoi acquisti, in un unico posto."],
+  hero_cta:["Book your demo","Solicita tu demo","Demandez votre démo","Richiedi la tua demo"],
+  hero_cta2:["See how it works","Ver cómo funciona","Voir comment ça marche","Guarda come funziona"],
+  hero_meta1:["Air mango only","Solo mango aéreo","Uniquement la mangue avion","Solo mango aereo"],
+  hero_meta2:["A new edition every week","Una edición nueva cada semana","Une nouvelle édition chaque semaine","Una nuova edizione ogni settimana"],
+  hero_meta3:["30-minute video demo","Demo de 30 minutos por videollamada","Démo de 30 minutes en visio","Demo di 30 minuti in videochiamata"],
+
+  wk:["W","S","S","S"],
+  mock_ed:["Edition 40 · W40 · 1 Oct 2026","Edición 40 · S40 · 1 oct 2026","Édition 40 · S40 · 1 oct. 2026","Edizione 40 · S40 · 1 ott 2026"],
+  tab_prices:["Prices","Precios","Prix","Prezzi"],
+  tab_volume:["Volume","Volúmenes","Volumes","Volumi"],
+  tab_weather:["Weather","Tiempo","Météo","Meteo"],
+  tab_news:["News","Novedades","Actualités","Novità"],
+  tab_ship:["My shipments","Mis pedidos","Mes envois","Spedizioni"],
+  mock_thermo:["Market thermometer","Termómetro del mercado","Thermomètre du marché","Termometro del mercato"],
+  mock_firm:["Firm, rising","Firme, al alza","Ferme, en hausse","Fermo, in rialzo"],
+  mock_freight:["Air freight · LIM → AMS/MAD","Flete aéreo · LIM → AMS/MAD","Fret aérien · LIM → AMS/MAD","Nolo aereo · LIM → AMS/MAD"],
+  mock_freight_n:["Tight space, Mexico season closing","Espacio ajustado, temporada MX cerrando","Espace serré, fin de saison au Mexique","Spazio ridotto, stagione MX in chiusura"],
+  mock_fob:["Kent air · FOB origin","Kent aéreo · FOB origen","Kent avion · FOB origine","Kent aereo · FOB origine"],
+  mock_fob_n:["Week on week","Semana contra semana","Semaine sur semaine","Settimana su settimana"],
+  mock_chart:["Kent air · origin vs. destination vs. freight · €/kg","Kent aéreo · origen vs. destino vs. flete · €/kg","Kent avion · origine vs. destination vs. fret · €/kg","Kent aereo · origine vs. destinazione vs. nolo · €/kg"],
+  freight_s:["Freight","Flete","Fret","Nolo"],
+  mock_call:["▸ The call","▸ La jugada","▸ Le conseil","▸ La mossa"],
+  mock_call_t:[
+    "Tight origin and little air space with Mexico closing: Kent by air holds up for 2 to 3 more weeks. If you need to position, do it this week. From W43 new supply starts pushing the price down.",
+    "Origen tensionado y espacio aéreo ajustado con MX cerrando: el Kent aéreo aguanta arriba 2 o 3 semanas más. Si tienes que posicionar, hazlo esta semana; a partir de S43 entra oferta que presiona el precio a la baja.",
+    "Origine tendue et peu d'espace aérien avec la fin du Mexique : le Kent avion tient encore 2 à 3 semaines. Si vous devez vous positionner, faites-le cette semaine. À partir de S43, l'offre pousse le prix à la baisse.",
+    "Origine tesa e poco spazio aereo con il Messico in chiusura: il Kent aereo regge ancora 2 o 3 settimane. Se devi posizionarti, fallo questa settimana. Dalla S43 l'offerta spinge il prezzo al ribasso."],
+  illus:["Illustrative data","Datos ilustrativos","Données illustratives","Dati illustrativi"],
+
+  gap_eye:["The gap","El problema","Le problème","Il problema"],
+  gap_title:["Big importers <em class=\"acc\">don't buy blind.</em>","Las grandes importadoras <em class=\"acc\">no compran a ciegas.</em>","Les grands importateurs <em class=\"acc\">n'achètent pas à l'aveugle.</em>","I grandi importatori <em class=\"acc\">non comprano alla cieca.</em>"],
+  gap_body:[
+    "They have a product manager following prices, freight, volumes and markets every day. When you have to piece all that together from suppliers, calls, WhatsApps and spreadsheets, something always arrives late. In air mango, arriving late costs margin.<span class=\"hl\">The difference isn't always in selling better. Often it's in buying better.</span>",
+    "Tienen un product manager siguiendo precios, fletes, volúmenes y mercados todos los días. Cuando tú tienes que reunir todo eso entre proveedores, llamadas, WhatsApps y hojas de cálculo, siempre hay algo que llega tarde. Y en mango aéreo, llegar tarde cuesta margen.<span class=\"hl\">La diferencia no siempre está en vender mejor. Muchas veces está en comprar mejor.</span>",
+    "Ils ont un product manager qui suit les prix, le fret, les volumes et les marchés tous les jours. Quand vous devez tout rassembler entre fournisseurs, appels, WhatsApp et tableurs, il y a toujours quelque chose qui arrive trop tard. En mangue avion, arriver tard coûte de la marge.<span class=\"hl\">La différence ne se fait pas toujours à la vente. Souvent, elle se fait à l'achat.</span>",
+    "Hanno un product manager che segue prezzi, noli, volumi e mercati ogni giorno. Quando devi mettere insieme tutto questo tra fornitori, telefonate, WhatsApp e fogli di calcolo, c'è sempre qualcosa che arriva tardi. Nel mango aereo, arrivare tardi costa margine.<span class=\"hl\">La differenza non sta sempre nel vendere meglio. Spesso sta nel comprare meglio.</span>"],
+  gap_without:["Today · five different places","Hoy · cinco sitios distintos","Aujourd'hui · cinq sources","Oggi · cinque posti diversi"],
+  gap_with:["With Mango Track · one screen","Con Mango Track · una sola pantalla","Avec Mango Track · un seul écran","Con Mango Track · un solo schermo"],
+  w1:["Prices spread across suppliers and WhatsApps","Precios repartidos entre proveedores y WhatsApps","Des prix éparpillés entre fournisseurs et WhatsApp","Prezzi sparsi tra fornitori e WhatsApp"],
+  w2:["Freight that changes between quote and booking","Fletes que cambian entre la cotización y la reserva","Un fret qui change entre la cotation et la réservation","Noli che cambiano tra quotazione e prenotazione"],
+  w3:["Volumes you hear about once the market is full","Volúmenes que conoces cuando el mercado ya está lleno","Des volumes connus quand le marché est déjà plein","Volumi che scopri quando il mercato è già pieno"],
+  w4:["Shipments tracked on each airline's website","Cargas que sigues en la web de cada aerolínea","Des envois suivis sur le site de chaque compagnie","Spedizioni seguite sul sito di ogni compagnia"],
+  m1:["Origin price against Rungis, Mercabarna and Rotterdam","Precio en origen frente a Rungis, Mercabarna y Róterdam","Prix origine face à Rungis, Mercabarna et Rotterdam","Prezzo all'origine contro Rungis, Mercabarna e Rotterdam"],
+  m2:["Freight by airport, week by week","Flete por aeropuerto, semana a semana","Fret par aéroport, semaine après semaine","Nolo per aeroporto, settimana per settimana"],
+  m3:["Volume leaving each origin","Volumen que sale de cada origen","Volumes au départ de chaque origine","Volumi in uscita da ogni origine"],
+  m4:["Less time searching, more control over every purchase","Menos tiempo buscando, más control sobre cada compra","Moins de temps à chercher, plus de contrôle sur chaque achat","Meno tempo a cercare, più controllo su ogni acquisto"],
+
+  tour_title:["Everything you need to stay on top of <em class=\"acc\">your air mango.</em>","Todo lo que necesitas para controlar <em class=\"acc\">tu mango aéreo.</em>","Tout ce qu'il faut pour piloter <em class=\"acc\">votre mangue avion.</em>","Tutto ciò che ti serve per controllare <em class=\"acc\">il tuo mango aereo.</em>"],
+  tour_sub:[
+    "What you now keep across suppliers, WhatsApps, websites and spreadsheets, in one place. Stop looking for information and start using it.",
+    "Lo que hoy tienes repartido entre proveedores, WhatsApps, webs y hojas de cálculo, en un solo lugar. Para dejar de buscar información y empezar a usarla.",
+    "Ce que vous avez aujourd'hui entre fournisseurs, WhatsApp, sites web et tableurs, au même endroit. Pour arrêter de chercher l'information et commencer à l'utiliser.",
+    "Quello che oggi hai sparso tra fornitori, WhatsApp, siti web e fogli di calcolo, in un unico posto. Per smettere di cercare informazioni e iniziare a usarle."],
+  t1:["Origin and market price","Precio en origen y en mercado","Prix origine et marché","Prezzo all'origine e al mercato"],
+  d1:["What the fruit costs at origin against what Rungis, Mercabarna and Rotterdam are paying, week by week.","Lo que vale la fruta en origen frente a lo que se paga en Rungis, Mercabarna y Róterdam, semana a semana.","Ce que vaut le fruit à l'origine face à ce que paient Rungis, Mercabarna et Rotterdam, semaine après semaine.","Quanto costa la frutta all'origine rispetto a quanto si paga a Rungis, Mercabarna e Rotterdam, settimana per settimana."],
+  t2:["Air freight","Flete aéreo","Fret aérien","Nolo aereo"],
+  d2:["Rates by airport and how they change the final cost of your fruit.","Tarifas por aeropuerto y cómo cambian el coste final de tu fruta.","Les tarifs par aéroport et leur effet sur le coût final de votre fruit.","Tariffe per aeroporto e come cambiano il costo finale della tua frutta."],
+  t3:["Outbound volume","Volumen de salida","Volumes au départ","Volumi in uscita"],
+  d3:["How much mango is leaving each origin, and when supply starts to shift.","Cuánto mango sale de cada origen y cuándo empieza a cambiar la oferta.","Combien de mangue part de chaque origine, et quand l'offre commence à bouger.","Quanto mango parte da ogni origine e quando l'offerta inizia a cambiare."],
+  t4:["Conditions at origin","Condiciones en origen","Conditions à l'origine","Condizioni all'origine"],
+  d4:["What's happening in the growing regions and how it can affect your next purchases.","Qué está pasando en las zonas productoras y cómo puede afectar a tus próximas compras.","Ce qui se passe dans les zones de production et l'impact possible sur vos prochains achats.","Cosa succede nelle zone di produzione e come può influire sui tuoi prossimi acquisti."],
+  t5:["Your shipments","Seguimiento de tus cargas","Suivi de vos envois","Le tue spedizioni"],
+  d5:["Follow every shipment by AWB and know where your fruit is, from one place.","Sigue tus operaciones por AWB y ten localizada tu mercancía desde un mismo lugar.","Suivez chaque envoi par LTA et sachez où est votre marchandise, depuis un seul endroit.","Segui ogni spedizione tramite AWB e sai sempre dov'è la tua merce, da un unico posto."],
+
+  p_prices:["Origin (FOB) vs. European markets · €/kg","Origen (FOB) vs. mercados europeos · €/kg","Origine (FOB) vs. marchés européens · €/kg","Origine (FOB) vs. mercati europei · €/kg"],
+  p_product:["Product","Producto","Produit","Prodotto"],
+  p_via:["Mode","Vía","Mode","Via"],
+  p_wk:["Wk","Sem.","Sem.","Sett."],
+  air:["Air","Aéreo","Avion","Aereo"], sea:["Sea","Marítimo","Bateau","Nave"],
+  pitahaya:["Yellow pitahaya","Pitahaya amarilla","Pitaya jaune","Pitaya gialla"],
+  granadilla:["Granadilla","Granadilla","Grenadille","Granadilla"],
+  p_routes:["Air freight by route · €/kg","Flete aéreo por ruta · €/kg","Fret aérien par route · €/kg","Nolo aereo per rotta · €/kg"],
+  p_best:["Cheapest","Más barata","Le moins cher","Più economica"],
+  p_fr10:["LIM → Europe · 10 weeks · €/kg","LIM → Europa · 10 semanas · €/kg","LIM → Europe · 10 semaines · €/kg","LIM → Europa · 10 settimane · €/kg"],
+  p_vol:["Air mango into Mercabarna · this week","Mango aéreo en Mercabarna · esta semana","Mangue avion à Mercabarna · cette semaine","Mango aereo a Mercabarna · questa settimana"],
+  p_pallets:["≈ 409 pallets · 9 active operators","≈ 409 pallets · 9 operadores activos","≈ 409 palettes · 9 opérateurs actifs","≈ 409 pallet · 9 operatori attivi"],
+  p_vol10:["Weekly tonnes · 10 weeks","Toneladas por semana · 10 semanas","Tonnes par semaine · 10 semaines","Tonnellate a settimana · 10 settimane"],
+  p_byorigin:["By origin airport","Por aeropuerto de origen","Par aéroport d'origine","Per aeroporto di origine"],
+  p_agg:["Market aggregate, never per company.","Dato agregado del mercado, nunca por empresa.","Agrégat du marché, jamais par entreprise.","Dato aggregato del mercato, mai per azienda."],
+  sunny:["Sunny","Soleado","Ensoleillé","Soleggiato"],
+  partly:["Partly cloudy","Parcial nublado","Partiellement nuageux","Parzialmente nuvoloso"],
+  today:["Today","Hoy","Auj.","Oggi"], tmrw:["Tomorrow","Mañana","Demain","Domani"], after:["Next day","Pasado","Après-dem.","Dopodomani"],
+  hum:["Humidity","Humedad","Humidité","Umidità"], rain:["Rain","Lluvia","Pluie","Pioggia"],
+  piura_n:["Steady heat and no rain. Kent ripens faster and harvest comes forward.","Calor sostenido y sin lluvia. Acelera la maduración del Kent, la cosecha se adelanta.","Chaleur soutenue et pas de pluie. Le Kent mûrit plus vite, la récolte avance.","Caldo costante e niente pioggia. Il Kent matura prima e la raccolta si anticipa."],
+  casma_n:["Cooler and more humid, slower ripening. Stable Brix and good fruit quality.","Más fresco y húmedo, maduración algo más lenta. Brix estable, buena calidad de fruta.","Plus frais et humide, maturation plus lente. Brix stable, bonne qualité de fruit.","Più fresco e umido, maturazione più lenta. Brix stabile, buona qualità della frutta."],
+  inflight:["In flight","En vuelo","En vol","In volo"],
+  ms:[
+    ["Picked up at origin","Loaded","Departed origin","In flight","Arrived at destination","Ready for delivery","Delivered"],
+    ["Recogido en origen","Embarcado","Salió de origen","En vuelo","Llegó a destino","Listo para entrega","Entregado"],
+    ["Enlevé à l'origine","Chargé","Parti de l'origine","En vol","Arrivé à destination","Prêt à livrer","Livré"],
+    ["Ritirato all'origine","Imbarcato","Partito dall'origine","In volo","Arrivato a destinazione","Pronto per la consegna","Consegnato"]],
+  pcs:["4 pcs · 1,005 kg","4 bultos · 1.005 kg","4 colis · 1 005 kg","4 colli · 1.005 kg"],
+  track:["Copy AWB and track","Copiar AWB y rastrear","Copier la LTA et suivre","Copia AWB e traccia"],
+  flight:["Flight","Vuelo","Vol","Volo"],
+
+  calc_eye:["Margin calculator","Calculadora de margen","Calculateur de marge","Calcolo del margine"],
+  calc_title:["Margin starts <em class=\"acc\">with the purchase.</em>","El margen empieza <em class=\"acc\">en la compra.</em>","La marge commence <em class=\"acc\">à l'achat.</em>","Il margine inizia <em class=\"acc\">dall'acquisto.</em>"],
+  calc_sub:[
+    "In air mango, the fruit is only part of the deal. Freight can change the final cost completely. Pay too much at origin or for transport, and that margin is hard to win back.<span class=\"hl\">Buy better. Control your costs. Protect your margin.</span>",
+    "En mango aéreo, la fruta es solo una parte de la operación. El flete puede cambiar por completo el coste final. Si compras caro en origen o pagas de más por el transporte, recuperar ese margen después es complicado.<span class=\"hl\">Compra mejor. Controla tus costes. Protege tu margen.</span>",
+    "En mangue avion, le fruit n'est qu'une partie de l'opération. Le fret peut changer complètement le coût final. Si vous achetez trop cher à l'origine ou payez trop le transport, cette marge est difficile à récupérer.<span class=\"hl\">Achetez mieux. Maîtrisez vos coûts. Protégez votre marge.</span>",
+    "Nel mango aereo, la frutta è solo una parte dell'operazione. Il nolo può cambiare completamente il costo finale. Se compri caro all'origine o paghi troppo il trasporto, quel margine è difficile da recuperare.<span class=\"hl\">Compra meglio. Controlla i costi. Proteggi il margine.</span>"],
+  c_fob:["FOB price at origin","Precio FOB en origen","Prix FOB à l'origine","Prezzo FOB all'origine"],
+  c_freight:["Air freight","Flete aéreo","Fret aérien","Nolo aereo"],
+  c_freight_s:["Freight","Flete","Fret","Nolo"],
+  c_hand:["Handling, customs and other","Handling, aduana y otros","Handling, douane et autres","Handling, dogana e altri"],
+  c_sell:["Selling price in market","Precio de venta en mercado","Prix de vente sur le marché","Prezzo di vendita al mercato"],
+  c_kg:["Kilos per shipment","Kilos por envío","Kilos par envoi","Chili per spedizione"],
+  c_n:["Shipments per season","Envíos por temporada","Envois par saison","Spedizioni per stagione"],
+  c_note:["Illustrative figures for Kent by air, week 40. Try it with your last shipment.","Cifras ilustrativas de Kent aéreo, semana 40. Prueba con tu último envío.","Chiffres illustratifs pour le Kent avion, semaine 40. Essayez avec votre dernier envoi.","Dati illustrativi per il Kent aereo, settimana 40. Prova con la tua ultima spedizione."],
+  c_landed:["Landed cost / kg","Coste en destino / kg","Coût rendu / kg","Costo a destino / kg"],
+  c_margin:["Margin","Margen","Marge","Margine"],
+  c_ship:["Margin per shipment","Margen por envío","Marge par envoi","Margine per spedizione"],
+  c_season:["Margin per season","Margen por temporada","Marge par saison","Margine per stagione"],
+  c_cent:["Every 0.10 €/kg better on the buy is worth","Cada 0,10 €/kg que mejoras en la compra vale","Chaque 0,10 €/kg gagné à l'achat vaut","Ogni 0,10 €/kg guadagnato sull'acquisto vale"],
+  c_cent_after:["over a season. That's where margin starts.","en una temporada. Ahí empieza el margen.","sur une saison. C'est là que la marge commence.","in una stagione. È lì che inizia il margine."],
+
+  how_eye:["How it works","Cómo funciona","Comment ça marche","Come funziona"],
+  how_title:["From information to purchase <em class=\"acc\">in 3 steps.</em>","De la información a la compra <em class=\"acc\">en 3 pasos.</em>","De l'information à l'achat <em class=\"acc\">en 3 étapes.</em>","Dall'informazione all'acquisto <em class=\"acc\">in 3 passi.</em>"],
+  s1t:["See what's happening.","Mira qué está pasando.","Voyez ce qui se passe.","Guarda cosa sta succedendo."],
+  s1d:["Check prices, freight, volumes and market conditions before you decide.","Consulta precios, fletes, volúmenes y condiciones del mercado antes de decidir.","Consultez prix, fret, volumes et conditions de marché avant de décider.","Consulta prezzi, noli, volumi e condizioni di mercato prima di decidere."],
+  s2t:["Know what it costs you.","Entiende cuánto te cuesta.","Sachez ce que ça vous coûte.","Capisci quanto ti costa."],
+  s2d:["Put fruit and freight side by side and see what each shipment really costs.","Cruza fruta y transporte para ver con más claridad cuánto te cuesta cada operación.","Croisez fruit et transport pour voir clairement ce que coûte chaque opération.","Incrocia frutta e trasporto per vedere con chiarezza quanto ti costa ogni operazione."],
+  s3t:["Buy with an edge.","Compra con ventaja.","Achetez avec un avantage.","Compra con un vantaggio."],
+  s3d:["Go into the negotiation with the numbers, and decide before the market moves.","Llega a la negociación con información y decide antes de que cambie el mercado.","Arrivez à la négociation avec les chiffres et décidez avant que le marché bouge.","Arriva alla trattativa con i numeri e decidi prima che il mercato si muova."],
+
+  eco_title:["We start <em class=\"acc\">with air mango.</em>","Empezamos <em class=\"acc\">por el mango aéreo.</em>","Nous commençons <em class=\"acc\">par la mangue avion.</em>","Iniziamo <em class=\"acc\">dal mango aereo.</em>"],
+  eco_sub:["Exotics Intelligence builds tools for fruit importers in Europe. Mango Track is the first.","Exotics Intelligence crea herramientas para importadores de fruta en Europa. Mango Track es la primera.","Exotics Intelligence crée des outils pour les importateurs de fruits en Europe. Mango Track est le premier.","Exotics Intelligence crea strumenti per gli importatori di frutta in Europa. Mango Track è il primo."],
+  e1_tag:["Live","Disponible","Disponible","Disponibile"],
+  e1_d:["Price, freight, volume, origin and your shipments. Buy air mango with the numbers in front of you.","Precio, flete, volumen, origen y tus cargas. Para comprar mango aéreo con los números delante.","Prix, fret, volumes, origine et vos envois. Pour acheter la mangue avion avec les chiffres sous les yeux.","Prezzo, nolo, volumi, origine e le tue spedizioni. Per comprare mango aereo con i numeri davanti."],
+  e2_name:["The Mango Importer's Guide","La guía del importador de mango","Le guide de l'importateur de mangue","La guida dell'importatore di mango"],
+  e2_tag:["Coming soon","Próximamente","Bientôt","In arrivo"],
+  e2_d:["A practical guide to buying mango by air: origins and calendars, varieties and Brix, freight and handling, quality claims and negotiation.","Una guía práctica para comprar mango aéreo: orígenes y calendarios, variedades y Brix, flete y handling, reclamaciones de calidad y negociación.","Un guide pratique pour acheter de la mangue avion : origines et calendriers, variétés et Brix, fret et handling, réclamations qualité et négociation.","Una guida pratica per comprare mango aereo: origini e calendari, varietà e Brix, noli e handling, reclami di qualità e negoziazione."],
+  e2_cta:["Ask about early access","Pregunta por el acceso anticipado","Demandez l'accès anticipé","Chiedi l'accesso anticipato"],
+  e3_name:["Websites for fruit importers","Webs para importadores de fruta","Sites web pour importateurs de fruits","Siti web per importatori di frutta"],
+  e3_tag:["Service","Servicio","Service","Servizio"],
+  e3_d:["Sites built for importers: product catalogue, origins and calendars, certifications and buyer contact. Made by people who know the trade.","Webs hechas para importadores: catálogo de producto, orígenes y calendarios, certificaciones y contacto para compradores. Hechas por gente que conoce el sector.","Des sites conçus pour les importateurs : catalogue produits, origines et calendriers, certifications et contact acheteurs. Réalisés par des gens qui connaissent le métier.","Siti pensati per importatori: catalogo prodotti, origini e calendari, certificazioni e contatto per i buyer. Fatti da chi conosce il settore."],
+  e3_cta:["Talk to us","Hablemos","Parlons-en","Parliamone"],
+
+  faq_title:["Questions importers <em class=\"acc\">ask us.</em>","Lo que nos preguntan <em class=\"acc\">los importadores.</em>","Les questions que nous posent <em class=\"acc\">les importateurs.</em>","Le domande che ci fanno <em class=\"acc\">gli importatori.</em>"],
+  faq:[
+    [["Who is Mango Track for?","For importers who already move air mango, with enough volume that one bad purchase shows up in the results. Especially companies that don't yet have someone dedicated to following the market. You don't need to hire a product manager to start buying with better information."],
+     ["Does it replace a product manager?","No. It gives you part of the visibility a big importer's product manager has: price, freight, volume and origin on one screen. The buying decision stays yours."],
+     ["Where does the data come from?","From price reporting at origin and in European wholesale markets, air cargo rates, aggregated arrival volumes and weather services. On the demo we show you exactly what we track for your routes."],
+     ["Can I see a competitor's volumes?","No. Volume is always aggregated for the whole market and never shown per company. Your own data is treated the same way."],
+     ["How does AWB tracking work?","You add each shipment with its AWB, airline and flight. You see its status and milestones, and open the airline's tracking page with one click."],
+     ["How much does it cost?","It depends on the markets and modules you need. We go through it on the demo call, with no commitment."]],
+    [["¿Para quién es Mango Track?","Para importadores que ya mueven mango aéreo y tienen volumen suficiente para que una mala compra se note en el resultado. Sobre todo, empresas que todavía no tienen una persona dedicada solo a seguir el mercado. No necesitas contratar un product manager para empezar a comprar con más información."],
+     ["¿Sustituye a un product manager?","No. Te da parte de la visibilidad que tiene el product manager de una gran importadora: precio, flete, volumen y origen en una sola pantalla. La decisión de compra sigue siendo tuya."],
+     ["¿De dónde salen los datos?","De precios en origen y en los mercados mayoristas europeos, tarifas de carga aérea, volúmenes de entrada agregados y servicios meteorológicos. En la demo te enseñamos exactamente qué seguimos para tus rutas."],
+     ["¿Puedo ver los volúmenes de un competidor?","No. El volumen siempre es agregado de todo el mercado y nunca se muestra por empresa. Tus datos reciben el mismo trato."],
+     ["¿Cómo funciona el seguimiento por AWB?","Añades cada carga con su AWB, aerolínea y vuelo. Ves su estado y sus hitos, y abres el rastreo de la aerolínea con un clic."],
+     ["¿Cuánto cuesta?","Depende de los mercados y módulos que necesites. Lo vemos en la demo, sin compromiso."]],
+    [["À qui s'adresse Mango Track ?","Aux importateurs qui travaillent déjà la mangue avion, avec assez de volume pour qu'un mauvais achat se voie dans le résultat. Surtout les entreprises qui n'ont pas encore de personne dédiée au suivi du marché. Pas besoin d'embaucher un product manager pour commencer à acheter mieux informé."],
+     ["Est-ce que ça remplace un product manager ?","Non. Vous obtenez une partie de la visibilité qu'a le product manager d'un grand importateur : prix, fret, volumes et origine sur un seul écran. La décision d'achat reste la vôtre."],
+     ["D'où viennent les données ?","Des relevés de prix à l'origine et sur les marchés de gros européens, des tarifs de fret aérien, des volumes d'arrivée agrégés et des services météo. Pendant la démo, nous vous montrons exactement ce que nous suivons pour vos routes."],
+     ["Puis-je voir les volumes d'un concurrent ?","Non. Les volumes sont toujours agrégés pour l'ensemble du marché et jamais affichés par entreprise. Vos propres données sont traitées de la même façon."],
+     ["Comment fonctionne le suivi par LTA ?","Vous ajoutez chaque commande avec sa LTA, sa compagnie et son vol. Vous voyez son statut et ses étapes, et ouvrez le suivi de la compagnie en un clic."],
+     ["Combien ça coûte ?","Cela dépend des marchés et des modules dont vous avez besoin. Nous en parlons pendant la démo, sans engagement."]],
+    [["A chi è rivolto Mango Track?","Per importatori che già muovono mango aereo, con volumi tali che un acquisto sbagliato si vede nel risultato. Soprattutto aziende che non hanno ancora una persona dedicata solo a seguire il mercato. Non serve assumere un product manager per iniziare a comprare con più informazioni."],
+     ["Sostituisce un product manager?","No. Ti dà parte della visibilità che ha il product manager di un grande importatore: prezzo, nolo, volumi e origine in un solo schermo. La decisione d'acquisto resta tua."],
+     ["Da dove vengono i dati?","Da rilevazioni di prezzo all'origine e nei mercati all'ingrosso europei, tariffe del cargo aereo, volumi di arrivo aggregati e servizi meteo. Nella demo ti mostriamo esattamente cosa monitoriamo per le tue rotte."],
+     ["Posso vedere i volumi di un concorrente?","No. I volumi sono sempre aggregati per tutto il mercato e mai mostrati per azienda. I tuoi dati sono trattati allo stesso modo."],
+     ["Come funziona il tracciamento AWB?","Aggiungi ogni ordine con AWB, compagnia aerea e volo. Ne vedi stato e tappe, e apri il tracciamento della compagnia con un clic."],
+     ["Quanto costa?","Dipende dai mercati e dai moduli di cui hai bisogno. Ne parliamo durante la demo, senza impegno."]]],
+
+  cta_title:["You don't need more information. <em class=\"acc\">You need to know what to do with it.</em>","No necesitas más información. <em class=\"acc\">Necesitas saber qué hacer con ella.</em>","Vous n'avez pas besoin de plus d'informations. <em class=\"acc\">Il faut savoir quoi en faire.</em>","Non ti servono più informazioni. <em class=\"acc\">Ti serve sapere cosa farne.</em>"],
+  cta_sub:[
+    "Mango Track turns market data into something you can use when you buy.<span class=\"hl\">Know the market. Control your costs. Protect your margin.</span>",
+    "Mango Track convierte datos de mercado en información útil para tus decisiones de compra.<span class=\"hl\">Conoce el mercado. Controla tus costes. Protege tu margen.</span>",
+    "Mango Track rend les données de marché utiles pour vos décisions d'achat.<span class=\"hl\">Connaissez le marché. Maîtrisez vos coûts. Protégez votre marge.</span>",
+    "Mango Track rende i dati di mercato utili per le tue decisioni d'acquisto.<span class=\"hl\">Conosci il mercato. Controlla i costi. Proteggi il margine.</span>"],
+  cta_btn:["Try Mango Track","Quiero probar Mango Track","Je veux essayer Mango Track","Voglio provare Mango Track"],
+  cta_note:["Book a demo and see how it works.","Solicita una demo y descubre cómo funciona.","Demandez une démo et voyez comment ça marche.","Richiedi una demo e scopri come funziona."],
+
+  f_tag:["Mango Track. Market intelligence for air mango. A product by Exotics Intelligence.","Mango Track. Inteligencia de mercado para el mango aéreo. Un producto de Exotics Intelligence.","Mango Track. L'intelligence marché de la mangue avion. Un produit Exotics Intelligence.","Mango Track. Market intelligence per il mango aereo. Un prodotto di Exotics Intelligence."],
+  f_legal:["Legal","Legal","Légal","Legale"],
+  f_privacy:["Privacy policy","Política de privacidad","Confidentialité","Privacy policy"],
+  f_notice:["Legal notice","Aviso legal","Mentions légales","Note legali"],
+  f_cookies:["Cookies","Cookies","Cookies","Cookie"],
+  f_disc:["Market figures on this page are illustrative.","Las cifras de mercado de esta página son ilustrativas.","Les chiffres de marché de cette page sont illustratifs.","I dati di mercato in questa pagina sono illustrativi."]
+};
+
+const LANGS=["en","es","fr","it"], LOCALE={en:"en-GB",es:"es-ES",fr:"fr-FR",it:"it-IT"};
+let lang="en", tourIdx=0;
+const t=k=>{const v=T[k];return v?v[LANGS.indexOf(lang)]:k;};
+const nf=(n,d=2)=>new Intl.NumberFormat(LOCALE[lang],{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+const eur=(n,d=0)=>new Intl.NumberFormat(LOCALE[lang],{style:"currency",currency:"EUR",minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+const delta=v=>`<span class="d ${v>=0?"up":"dn"}">${v>=0?"▲":"▼"} ${v>=0?"+":""}${nf(v,1)}%</span>`;
+const wk=w=>t("wk")+w;
+
+/* ---------- charts (single scale per chart) ---------- */
+function trendChart(rows){
+  const W=640,H=250,pl=34,pr=86,pt=14,pb=30;
+  const lo=1,hi=6,ticks=[1,2,3,4,5,6];
+  const X=i=>pl+i*(W-pl-pr)/(rows.length-1), Y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const path=k=>rows.map((r,i)=>`${i?"L":"M"}${X(i).toFixed(1)} ${Y(r[k]).toFixed(1)}`).join(" ");
+  const area=`${path("rungis")} L${X(rows.length-1)} ${H-pb} L${X(0)} ${H-pb} Z`;
+  const grid=ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end" style="fill:var(--dim)" font-size="11" font-family="Geist Mono,monospace">${v}</text>`).join("");
+  const xl=rows.map((r,i)=>i%3===0||i===rows.length-1?`<text x="${X(i)}" y="${H-8}" text-anchor="middle" style="fill:var(--dim)" font-size="11" font-family="Geist Mono,monospace">${wk(r.w)}</text>`:"").join("");
+  const last=rows[rows.length-1], lx=X(rows.length-1);
+  const end=(k,c,label)=>`<circle cx="${lx}" cy="${Y(last[k])}" r="4" style="fill:${c};stroke:var(--surface-2)" stroke-width="2"/><text x="${lx+10}" y="${Y(last[k])+4}" style="fill:${c}" font-size="11.5" font-family="Geist Mono,monospace">${label} ${nf(last[k])}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <defs><linearGradient id="ra" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f2eb" stop-opacity=".12"/><stop offset="1" stop-color="#f5f2eb" stop-opacity="0"/></linearGradient></defs>
+    ${grid}${xl}
+    <path d="${area}" fill="url(#ra)"/>
+    <path d="${path("rungis")}" fill="none" style="stroke:var(--fg)" stroke-width="2"/>
+    <path d="${path("fr")}" fill="none" style="stroke:var(--muted)" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <path d="${path("fob")}" fill="none" style="stroke:var(--mango)" stroke-width="2.6" stroke-linecap="round"/>
+    ${end("rungis","var(--fg)","Rungis")}${end("fr","var(--muted)",t("freight_s"))}${end("fob","var(--mango)","FOB")}
+  </svg>`;
+}
+function sparkFreight(rows){
+  const W=560,H=150,pl=34,pr=60,pt=12,pb=26,lo=2.5,hi=2.8,ticks=[2.5,2.6,2.7,2.8];
+  const X=i=>pl+i*(W-pl-pr)/(rows.length-1), Y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const p=rows.map((r,i)=>`${i?"L":"M"}${X(i).toFixed(1)} ${Y(r.fr).toFixed(1)}`).join(" ");
+  const a=`${p} L${X(rows.length-1)} ${H-pb} L${X(0)} ${H-pb} Z`;
+  const last=rows[rows.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <defs><linearGradient id="fa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffae3d" stop-opacity=".28"/><stop offset="1" stop-color="#ffae3d" stop-opacity="0"/></linearGradient></defs>
+    ${ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end" style="fill:var(--dim)" font-size="10.5" font-family="Geist Mono,monospace">${nf(v,1)}</text>`).join("")}
+    ${rows.map((r,i)=>i%3===0||i===rows.length-1?`<text x="${X(i)}" y="${H-6}" text-anchor="middle" style="fill:var(--dim)" font-size="10.5" font-family="Geist Mono,monospace">${wk(r.w)}</text>`:"").join("")}
+    <path d="${a}" fill="url(#fa)"/><path d="${p}" fill="none" style="stroke:var(--mango)" stroke-width="2.4"/>
+    <circle cx="${X(rows.length-1)}" cy="${Y(last.fr)}" r="4" style="fill:var(--mango);stroke:var(--surface)" stroke-width="2"/>
+    <text x="${X(rows.length-1)+10}" y="${Y(last.fr)+4}" style="fill:var(--mango)" font-size="12" font-family="Geist Mono,monospace">${nf(last.fr)}</text>
+  </svg>`;
+}
+function volBars(vals){
+  const W=560,H=170,pl=34,pr=10,pt=18,pb=26,hi=200,ticks=[0,100,200];
+  const gap=(W-pl-pr)/vals.length,bw=gap*.6,Y=v=>pt+(H-pt-pb)*(1-v/hi);
+  return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    ${ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end" style="fill:var(--dim)" font-size="10.5" font-family="Geist Mono,monospace">${v}</text>`).join("")}
+    ${vals.map((v,i)=>{const x=pl+i*gap+(gap-bw)/2,y=Y(v),last=i===vals.length-1;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${(H-pb-y).toFixed(1)}" rx="3" style="fill:${last?"var(--mango)":"var(--surface-3)"}"/>`+
+      (last?`<text x="${(x+bw/2).toFixed(1)}" y="${(y-6).toFixed(1)}" text-anchor="middle" style="fill:var(--mango)" font-size="11.5" font-family="Geist Mono,monospace">${v} t</text>`:"")+
+      (i%3===0||last?`<text x="${(x+bw/2).toFixed(1)}" y="${H-6}" text-anchor="middle" style="fill:var(--dim)" font-size="10.5" font-family="Geist Mono,monospace">${wk(31+i)}</text>`:"");}).join("")}
+  </svg>`;
+}
+
+/* ---------- hero product frame ---------- */
+function renderFrame(){
+  const tabs=["tab_prices","tab_volume","tab_weather","tab_news","tab_ship"];
+  document.getElementById("frame").innerHTML=`
+    <div class="fbar">
+      <span class="pt"><svg aria-hidden="true"><use href="#logo"/></svg>Mango Track</span>
+      <div class="ftabs">${tabs.map((k,i)=>`<span class="ftab${i===0?" on":""}">${t(k)}</span>`).join("")}</div>
+      <span class="fed">${t("mock_ed")}</span>
+    </div>
+    <div class="fbody">
+      <div class="kcol">
+        <div class="k"><div class="lbl">${t("mock_thermo")}</div>
+          <div class="kv"><span class="n" style="color:var(--mango)">72</span><span style="font-size:14px">${t("mock_firm")}</span></div>
+          <div class="thermo"><i style="width:72%"></i></div></div>
+        <div class="k"><div class="lbl">${t("mock_freight")}</div>
+          <div class="kv"><span class="n">${nf(2.74)}</span><span class="u">€/kg</span>${delta(0.7)}</div>
+          <div class="ks">${t("mock_freight_n")}</div></div>
+        <div class="k"><div class="lbl">${t("mock_fob")}</div>
+          <div class="kv"><span class="n">${nf(2.10)}</span><span class="u">€/kg</span>${delta(6.2)}</div>
+          <div class="ks">${t("mock_fob_n")} · Rungis ${nf(5.60)} · Merca ${nf(5.30)}</div></div>
+      </div>
+      <div class="ccol">
+        <div class="chartcard"><div class="lbl">${t("mock_chart")}</div>${trendChart(DATA.serie)}
+          <div class="legend"><span><i style="background:var(--mango)"></i>FOB</span><span><i style="background:var(--fg)"></i>Rungis</span><span><i style="background:var(--muted)"></i>${t("freight_s")}</span></div></div>
+        <div class="call"><div class="lbl">${t("mock_call")}</div><p>${t("mock_call_t")}</p></div>
+      </div>
+    </div>
+    <div class="ffoot"><span>Mango Track · Exotics Intelligence</span><span>${t("illus")}</span></div>`;
+}
+
+/* ---------- ticker ---------- */
+function renderTicker(){
+  const items=[
+    ["KENT AIR FOB",`${nf(2.10)} €/kg`,6.2],["HADEN AIR FOB",`${nf(1.85)} €/kg`,3.1],["RUNGIS · KENT",`${nf(5.60)} €/kg`,null],
+    ["MERCABARNA · KENT",`${nf(5.30)} €/kg`,null],["ROTTERDAM · KENT",`${nf(5.10)} €/kg`,null],["LIM → AMS",`${nf(2.74)} €/kg`,0.7],
+    ["LIM → MAD",`${nf(2.79)} €/kg`,1.1],["MERCABARNA VOL",`184 t`,12.4],["KENT SEA FOB",`${nf(1.05)} €/kg`,-4.4],["PIURA","33° / 22° · 0 mm",null]
+  ];
+  const html=items.map(([a,b,c])=>`<span class="titem"><b>${a}</b><span>${b}</span>${c!==null?delta(c):""}</span>`).join("");
+  document.getElementById("ticker").innerHTML=html+html;
+}
+
+/* ---------- module tour ---------- */
+const MODS=[["t1","d1","i-price"],["t2","d2","i-plane"],["t3","d3","i-box"],["t4","d4","i-sun"],["t5","d5","i-awb"]];
+function panel(i){
+  if(i===0){
+    const rows=DATA.products.map(p=>`<tr><td>${p.k.startsWith("Mango")?p.k:t(p.k)}</td><td><span class="via ${p.via}">${t(p.via)}</span></td><td style="color:var(--muted)">${p.brix}</td><td class="fob">${nf(p.fob)}</td><td>${nf(p.rungis)}</td><td>${nf(p.merca)}</td><td>${nf(p.rotter)}</td><td>${delta(p.wow)}</td></tr>`).join("");
+    return `<div class="phead"><span class="lbl">${t("p_prices")}</span><span class="tag">${t("illus")}</span></div>
+      <div class="scroll"><table><thead><tr><th>${t("p_product")}</th><th>${t("p_via")}</th><th>Brix</th><th class="fob">FOB</th><th>Rungis</th><th>Merca</th><th>Rotterdam</th><th>${t("p_wk")}</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="call" style="margin-top:16px"><div class="lbl">${t("mock_call")}</div><p>${t("mock_call_t")}</p></div>`;
+  }
+  if(i===1){
+    const min=Math.min(...DATA.routes.map(r=>r.v));
+    return `<div class="phead"><span class="lbl">${t("p_routes")}</span><span class="tag">${t("illus")}</span></div>
+      <div class="routes">${DATA.routes.map(r=>`<div class="route${r.v===min?" best":""}"><span class="r">${r.o}<svg aria-hidden="true"><use href="#arrow"/></svg>${r.d}${r.v===min?` <span class="best-tag">${t("p_best")}</span>`:""}</span><span class="v">${nf(r.v)}</span>${delta(r.wow)}</div>`).join("")}</div>
+      <div class="chartcard" style="margin-top:14px"><div class="lbl">${t("p_fr10")}</div>${sparkFreight(DATA.serie)}</div>`;
+  }
+  if(i===2){
+    const col=["var(--mango)","var(--mango-deep)","var(--leaf)"];
+    return `<div class="phead"><span class="lbl">${t("p_vol")}</span><span class="tag">${t("illus")}</span></div>
+      <div class="two">
+        <div class="k"><div class="kv" style="margin-top:0"><span class="n" style="font-size:40px;color:var(--mango)">184</span><span class="u">t</span>${delta(12.4)}</div><div class="ks">${t("p_pallets")}</div></div>
+        <div class="k"><div class="lbl">${t("p_byorigin")}</div><div class="bars" style="margin-top:10px">${DATA.origins.map((o,j)=>`<div class="bar"><div class="bt"><span>${o.a}</span><span>${o.t} t · <b style="color:${col[j]};font-weight:500">${o.pct}%</b></span></div><div class="track"><i style="width:${o.pct}%;background:${col[j]}"></i></div></div>`).join("")}</div></div>
+      </div>
+      <div class="chartcard" style="margin-top:12px"><div class="lbl">${t("p_vol10")}</div>${volBars(DATA.vol)}</div>
+      <p style="margin:10px 0 0;font-size:12.5px;color:var(--dim)">${t("p_agg")}</p>`;
+  }
+  if(i===3){
+    const z=[
+      {n:"Piura",max:33,min:22,hum:58,c:"sunny",ic:"w-sun",fc:[["today","w-sun",33,22],["tmrw","w-sun",34,23],["after","w-part",32,22]],note:"piura_n"},
+      {n:"Casma",max:28,min:19,hum:70,c:"partly",ic:"w-part",fc:[["today","w-part",28,19],["tmrw","w-cloud",27,19],["after","w-sun",29,20]],note:"casma_n"}];
+    return `<div class="phead"><span class="lbl">${t("t4")} · Perú</span><span class="tag">${t("illus")}</span></div>
+      <div class="two">${z.map(r=>`<div class="wx">
+        <div class="wx-top"><div><div class="lbl">${r.n.toUpperCase()}</div><div class="kv"><span class="n" style="font-size:36px">${r.max}°</span><span class="u">min ${r.min}°</span></div><div style="font-size:14px;margin-top:2px">${t(r.c)}</div></div><svg aria-hidden="true"><use href="#${r.ic}"/></svg></div>
+        <div class="mono" style="display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px;flex-wrap:wrap"><span>${t("hum")} ${r.hum}%</span><span>${t("rain")} 0 mm</span></div>
+        <div class="fc">${r.fc.map(f=>`<div class="fcd"><small>${t(f[0])}</small><svg aria-hidden="true"><use href="#${f[1]}"/></svg>${f[2]}° <span style="color:var(--muted)">${f[3]}°</span></div>`).join("")}</div>
+        <div class="note"><span aria-hidden="true">▸</span><span>${t(r.note)}</span></div></div>`).join("")}</div>`;
+  }
+  const ms=T.ms[LANGS.indexOf(lang)], now=3;
+  return `<div class="phead"><span class="lbl">${t("tab_ship")}</span><span class="tag">${t("illus")}</span></div>
+    <div class="awb">
+      <div class="awb-h"><div><div class="awb-n">075-12345678</div><div style="font-size:13px;color:var(--muted);margin-top:4px">PO-2046 · Mango Kent · IAG Cargo</div><div style="font-size:14px;margin-top:4px">Quito (UIO) → Madrid (MAD) · ${t("pcs")}</div></div><span class="status">${t("inflight")}</span></div>
+      <div class="ms">${ms.map((m,j)=>`<div class="m ${j<now?"done":j===now?"now":""}"><i></i><span>${m}</span><small>${j===2?t("flight")+" IB0138":j===now?"ETA 14:20":""}</small></div>`).join("")}</div>
+      <span class="fakebtn">${t("track")} →</span>
+    </div>`;
+}
+function renderTour(){
+  const list=document.getElementById("tlist");
+  list.innerHTML=MODS.map(([tt,dd,ic],i)=>`<button class="titem-btn" role="tab" id="tab-${i}" aria-controls="tpanel" aria-selected="${i===tourIdx}" tabindex="${i===tourIdx?0:-1}" data-i="${i}">
+    <span class="ico"><svg aria-hidden="true"><use href="#${ic}"/></svg></span><span class="tt">${t(tt)}</span><span class="td">${t(dd)}</span></button>`).join("");
+  const p=document.getElementById("tpanel");
+  p.setAttribute("aria-labelledby","tab-"+tourIdx);
+  p.innerHTML=`<div class="tpanel-in">${panel(tourIdx)}</div>`;
+}
+document.getElementById("tlist").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;tourIdx=+b.dataset.i;renderTour();document.getElementById("tab-"+tourIdx).focus();});
+document.getElementById("tlist").addEventListener("keydown",e=>{
+  if(!["ArrowDown","ArrowRight","ArrowUp","ArrowLeft"].includes(e.key))return;e.preventDefault();
+  const dir=(e.key==="ArrowDown"||e.key==="ArrowRight")?1:-1;tourIdx=(tourIdx+dir+MODS.length)%MODS.length;renderTour();document.getElementById("tab-"+tourIdx).focus();});
+
+/* ---------- calculator ---------- */
+const ids=["c_fob","c_fr","c_ha","c_se","c_kg","c_n"];
+function calc(){
+  const [fob,fr,ha,se,kg,n]=ids.map(id=>Math.max(0,parseFloat(document.getElementById(id).value)||0));
+  const landed=fob+fr+ha, m=se-landed, pct=se>0?m/se*100:0;
+  const neg=m<0;
+  document.getElementById("o_landed").innerHTML=`${nf(landed)}<small>€/kg</small>`;
+  const om=document.getElementById("o_margin");
+  om.innerHTML=`${nf(m)}<small>€/kg · ${nf(pct,0)}%</small>`;om.classList.toggle("neg",neg);
+  const os=document.getElementById("o_ship"),oz=document.getElementById("o_season");
+  os.textContent=eur(m*kg);oz.textContent=eur(m*kg*n);os.classList.toggle("neg",neg);oz.classList.toggle("neg",neg);
+  const tot=Math.max(se,landed)||1, seg=(v,c)=>`<i style="width:${(v/tot*100).toFixed(2)}%;background:${c}"></i>`;
+  document.getElementById("o_bar").innerHTML=seg(fob,"var(--mango)")+seg(fr,"var(--mango-deep)")+seg(ha,"var(--dim)")+(m>0?seg(m,"var(--leaf)"):"");
+  document.getElementById("o_cent").textContent=eur(0.10*kg*n);
+}
+ids.forEach(id=>document.getElementById(id).addEventListener("input",calc));
+
+/* ---------- faq ---------- */
+function renderFaq(){
+  const open=[...document.querySelectorAll("#faqList details")].map(d=>d.open);
+  document.getElementById("faqList").innerHTML=T.faq[LANGS.indexOf(lang)].map(([q,a],i)=>`<details${open[i]||(!open.length&&i===0)?" open":""}><summary>${q}<span class="pm" aria-hidden="true"><svg><use href="#plus"/></svg></span></summary><p>${a}</p></details>`).join("");
+}
+
+/* ---------- i18n ---------- */
+function setLang(l){
+  lang=LANGS.includes(l)?l:"en";
+  document.documentElement.lang=lang;
+  document.getElementById("lang").value=lang;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const v=t(el.dataset.i18n);if(v!==undefined)el.innerHTML=v;});
+  renderFrame();renderTicker();renderTour();renderFaq();calc();
+  try{localStorage.setItem("ei_lang",lang);}catch(e){}
+}
+document.getElementById("lang").addEventListener("change",e=>setLang(e.target.value));
+
+/* ---------- nav ---------- */
+const nav=document.getElementById("nav"),mb=document.getElementById("menuBtn");
+mb.addEventListener("click",()=>{const o=nav.classList.toggle("open");mb.setAttribute("aria-expanded",o);});
+document.querySelectorAll("#mobileMenu a").forEach(a=>a.addEventListener("click",()=>{nav.classList.remove("open");mb.setAttribute("aria-expanded","false");}));
+addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>8),{passive:true});
+
+/* ---------- Calendly on every demo button ---------- */
+document.querySelectorAll(".js-cal").forEach(a=>{a.href=CALENDLY_URL;a.target="_blank";a.rel="noopener";});
+
+/* ---------- boot ---------- */
+let start="en";
+try{start=localStorage.getItem("ei_lang")||"";}catch(e){}
+if(!start){const nl=(navigator.language||"en").slice(0,2).toLowerCase();start=LANGS.includes(nl)?nl:"en";}
+setLang(start);
+</script>
